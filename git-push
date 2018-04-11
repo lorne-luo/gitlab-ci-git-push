@@ -1,16 +1,17 @@
 #!/bin/bash -e
 
-url=$1
-branch=$2
+ssh_key_name=$1
+url=$2
+branch=$3
 
-if [ -z "$SSH_PRIVATE_KEY" ]; then
+if [ -z "${!ssh_key_name}" ]; then
 	>&2 echo "Set SSH_PRIVATE_KEY environment variable"
 	exit 1
 fi
 
 ssh_host=$(echo $url | sed 's/.*@//' | sed 's/[:/].*//')
 if [ -z "$ssh_host" ]; then
-	>&2 echo "Usage: $0 <user@git.host:project | ssh://user@git.host:port/project> [<branch>]"
+	>&2 echo "Usage: $0 <ssh_key_name> <user@git.host:project | ssh://user@git.host:port/project> [<branch>]"
 	exit 1
 fi
 
@@ -21,7 +22,7 @@ fi
 
 # TODO: skip on multiple runs
 mkdir -p ~/.ssh
-echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+echo "${!ssh_key_name}" | tr -d '\r' > ~/.ssh/id_rsa
 chmod 600 ~/.ssh/id_rsa
 ssh-keyscan -H $ssh_port "$ssh_host" >> ~/.ssh/known_hosts
 

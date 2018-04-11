@@ -1,13 +1,13 @@
 # GitLab CI runner that pushes to git
 
-This GitLab CI runner image allows to deploy a GitLab project to a remote Git repo (useful for Dokku, Heroku, Deis, etc.)
+This GitLab CI runner image allows to deploy a GitLab project to a remote Git repo.
 
 ## How to use
 
 Create `.gitlab-ci.yml`:
 
 ```yaml
-image: ilyasemenov/gitlab-ci-git-push
+image: lorneluo/gitlab-ci-git-push
 
 stages:
   - deploy
@@ -17,7 +17,7 @@ deploy to production:
   environment: production
   only:
     - master
-  script: git-push dokku@dokku.me:myapp
+  script: git-push SSH_PRIVATE_KEY user@git.host:repo
 ```
 
 Go to GitLab > Project > Settings > CI/CD Pipelines > Secret Variables, and add a variable `SSH_PRIVATE_KEY`:
@@ -33,13 +33,7 @@ Go to GitLab > Project > Settings > CI/CD Pipelines > Secret Variables, and add 
 By default, `git-push` will push to branch `master` of a remote repository (that's what Dokku wants). You can override this with:
 
 ```console
-git-push user@git.host:repo branch
-```
-
-### Pushing to Git running on a non-standard port
-
-```console
-git-push ssh://dokku@dokku.me:8022/myapp
+git-push SSH_PRIVATE_KEY user@git.host:repo branch
 ```
 
 ### Not doing force push
